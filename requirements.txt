@@ -1,3 +1,4 @@
 flask
 vnstock3
 pandas
+gunicorn
