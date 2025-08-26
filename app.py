@@ -1,10 +1,11 @@
 from flask import Flask, jsonify
 from vnstock import Screener
+from flask_cors import CORS  # Thêm thư viện này
 
 app = Flask(__name__)
-screener = Screener()
+CORS(app)  # Cho phép tất cả domain (dùng cho test, sau đó giới hạn nếu cần)
 
-# Lấy toàn bộ cổ phiếu HOSE/HNX/UPCOM một lần
+screener = Screener()
 screener_df = screener.stock(params={"exchangeName": "HOSE,HNX,UPCOM"}, limit=1700)
 
 @app.route("/api/stock/<symbol>")
@@ -16,9 +17,9 @@ def get_stock(symbol):
 
         latest_price = row.iloc[0]["price_near_realtime"]
         change_pct = row.iloc[0]["prev_1d_growth_pct"]
-        change_amount = latest_price * (change_pct / 100) if latest_price and change_pct else 0  # Calculate absolute change
+        change_amount = latest_price * (change_pct / 100) if latest_price and change_pct else 0
         volume = row.iloc[0]["avg_trading_value_5d"]
-        update_time = "26/08/2025 09:25"  # Static for now; adjust if real-time data is available
+        update_time = "26/08/2025 09:25"  # Thay bằng thời gian động nếu cần
 
         data = {
             "symbol": symbol.upper(),
